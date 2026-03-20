@@ -10,19 +10,21 @@
 ## 파일 구조
 ```
 SE/
-├── CLAUDE.md               ← 이 파일 (작업 컨텍스트)
-├── PLAN.md                 ← 구현 계획서
-├── PPT_CONTENT.md          ← 발표 자료 마크다운 (슬라이드 내용 + 반복 개선 기록)
-├── [과제 1] Vibe Coding.pdf ← 과제 명세
-├── index.html              ← V1 (placeholder 이미지, 하드코딩 가격)
-├── index_v2.html           ← V2 (제조사 공식 제품 이미지 적용)
-├── index_v3.html           ← V3 (실시간 가격 시뮬레이션 + 출처/시간 표시)
-├── slides.md               ← Slidev 슬라이드 소스 (참고용, PPTX 생성에는 미사용)
-├── generate_pptx.mjs       ← PPTX 생성 스크립트 (pptxgenjs)
-├── SE_과제1_발표자료.pptx    ← 최종 편집 가능한 PPTX (node generate_pptx.mjs로 재생성)
-├── SE_과제1_발표자료_v2.pptx ← Slidev 이미지 기반 PPTX (편집 불가, 삭제 가능)
-├── package.json            ← npm 프로젝트
-└── node_modules/           ← 의존성 (slidev, pptxgenjs, playwright-chromium 등)
+├── index.html              ← V1 웹페이지
+├── index_v2.html           ← V2 이미지 적용
+├── index_v3.html           ← V3 가격 시뮬레이션
+├── index_v4.html           ← V4 색상 통일 (최신)
+├── ppt/                    ← 발표 자료
+│   ├── generate_pptx.mjs   ← PPT 생성 스크립트
+│   └── SE_과제1_발표자료.pptx
+├── docs/                   ← 참고 문서
+│   ├── PLAN.md             ← 구현 계획서
+│   ├── PPT_CONTENT.md      ← 발표 내용 + 반복 개선 기록
+│   └── [과제 1] Vibe Coding.pdf
+├── CLAUDE.md               ← 작업 컨텍스트 (이 파일)
+├── .gitignore
+├── package.json
+└── package-lock.json
 ```
 
 ## 버전 관리 규칙
@@ -39,9 +41,8 @@ SE/
 - **다음 버전**: V5부터 이어서 작업
 
 ## PPTX 생성 방법
-- `generate_pptx.mjs`를 수정 후 `node generate_pptx.mjs` 실행하면 `SE_과제1_발표자료.pptx`를 덮어씀
+- `cd ppt && node generate_pptx.mjs` 실행하면 `ppt/SE_과제1_발표자료.pptx` 생성
 - **주의**: 실행 전에 PowerPoint에서 해당 파일을 닫아야 함 (EBUSY 에러 방지)
-- Slidev는 이미지 기반 export라 편집 불가 → **pptxgenjs 방식 사용**
 - PPTX 디자인: Deep Navy(#0D1B2A) 배경, Gold(#E2B714) 악센트, 카드 레이아웃
 
 ## PPT 발표 자료 작업 규칙

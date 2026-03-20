@@ -405,9 +405,13 @@ addBullet(slide, 0.75, 4.2, 4.0, [
 // Right: Screenshot (large)
 addCard(slide, 5.3, 1.1, 7.5, 5.9, { borderColor: C.accent });
 slide.addText("[ V1 스크린샷 삽입 ]", {
-  x: 5.3, y: 1.1, w: 7.5, h: 5.9,
+  x: 5.3, y: 1.1, w: 7.5, h: 5.2,
   fontSize: 14, fontFace: "맑은 고딕", color: C.dimDark,
   align: "center", valign: "middle",
+});
+slide.addText([{ text: "leegjin.github.io/CamCombo/index.html", options: { hyperlink: { url: "https://leegjin.github.io/CamCombo/index.html" } } }], {
+  x: 5.3, y: 6.3, w: 7.5, h: 0.4,
+  fontSize: 13, fontFace: "맑은 고딕", color: C.accent, align: "center", underline: true,
 });
 
 // ===================================================================
@@ -439,9 +443,13 @@ slide.addText("sony.co.jp · global.canon\nimaging.nikon.com · fujifilm-x.com",
 // Right: Screenshot (large)
 addCard(slide, 5.3, 1.1, 7.5, 5.9, { borderColor: C.accent });
 slide.addText("[ V2 스크린샷 삽입 ]", {
-  x: 5.3, y: 1.1, w: 7.5, h: 5.9,
+  x: 5.3, y: 1.1, w: 7.5, h: 5.2,
   fontSize: 14, fontFace: "맑은 고딕", color: C.dimDark,
   align: "center", valign: "middle",
+});
+slide.addText([{ text: "leegjin.github.io/CamCombo/index_v2.html", options: { hyperlink: { url: "https://leegjin.github.io/CamCombo/index_v2.html" } } }], {
+  x: 5.3, y: 6.3, w: 7.5, h: 0.4,
+  fontSize: 13, fontFace: "맑은 고딕", color: C.accent, align: "center", underline: true,
 });
 
 // ===================================================================
@@ -474,9 +482,13 @@ addBullet(slide, 0.75, 4.4, 4.0, [
 // Right: Screenshot (large)
 addCard(slide, 5.3, 1.1, 7.5, 5.9, { borderColor: C.accent });
 slide.addText("[ V3 스크린샷 삽입 ]", {
-  x: 5.3, y: 1.1, w: 7.5, h: 5.9,
+  x: 5.3, y: 1.1, w: 7.5, h: 5.2,
   fontSize: 14, fontFace: "맑은 고딕", color: C.dimDark,
   align: "center", valign: "middle",
+});
+slide.addText([{ text: "leegjin.github.io/CamCombo/index_v3.html", options: { hyperlink: { url: "https://leegjin.github.io/CamCombo/index_v3.html" } } }], {
+  x: 5.3, y: 6.3, w: 7.5, h: 0.4,
+  fontSize: 13, fontFace: "맑은 고딕", color: C.accent, align: "center", underline: true,
 });
 
 // ===================================================================
@@ -509,9 +521,13 @@ addBullet(slide, 0.75, 5.4, 4.0, [
 // Right: Screenshot (large)
 addCard(slide, 5.3, 1.1, 7.5, 5.9, { borderColor: C.accent });
 slide.addText("[ V4 스크린샷 삽입 ]", {
-  x: 5.3, y: 1.1, w: 7.5, h: 5.9,
+  x: 5.3, y: 1.1, w: 7.5, h: 5.2,
   fontSize: 14, fontFace: "맑은 고딕", color: C.dimDark,
   align: "center", valign: "middle",
+});
+slide.addText([{ text: "leegjin.github.io/CamCombo/index_v4.html", options: { hyperlink: { url: "https://leegjin.github.io/CamCombo/index_v4.html" } } }], {
+  x: 5.3, y: 6.3, w: 7.5, h: 0.4,
+  fontSize: 13, fontFace: "맑은 고딕", color: C.accent, align: "center", underline: true,
 });
 
 // ===================================================================
@@ -707,18 +723,27 @@ const refs = [
   "Anthropic Claude Code 공식 문서 — claude.ai/claude-code",
   "Color Hunt / Design Shack / SlideUplift — 발표 색상 팔레트 조사",
   "Edward Tufte — 프로젝터 발표 배경색 권장 사항",
+  "GitHub — github.com/LeeGJin/CamCombo",
 ];
+const refLinks = [null, null, null, null, "https://github.com/LeeGJin/CamCombo"];
 refs.forEach((ref, i) => {
-  const yPos = 1.5 + i * 0.9;
-  addCard(slide, 0.6, yPos, 11.5, 0.7);
+  const yPos = 1.4 + i * 0.8;
+  addCard(slide, 0.6, yPos, 11.5, 0.65);
   slide.addText(`${i + 1}.`, {
-    x: 0.85, y: yPos, w: 0.5, h: 0.7,
+    x: 0.85, y: yPos, w: 0.5, h: 0.65,
     fontSize: 18, fontFace: "맑은 고딕", bold: true, color: C.accent, valign: "middle",
   });
-  slide.addText(ref, {
-    x: 1.4, y: yPos, w: 10, h: 0.7,
-    fontSize: 15, fontFace: "맑은 고딕", color: C.text, valign: "middle",
-  });
+  if (refLinks[i]) {
+    slide.addText([{ text: ref, options: { hyperlink: { url: refLinks[i] } } }], {
+      x: 1.4, y: yPos, w: 10, h: 0.65,
+      fontSize: 15, fontFace: "맑은 고딕", color: C.accent, valign: "middle", underline: true,
+    });
+  } else {
+    slide.addText(ref, {
+      x: 1.4, y: yPos, w: 10, h: 0.65,
+      fontSize: 15, fontFace: "맑은 고딕", color: C.text, valign: "middle",
+    });
+  }
 });
 
 // ===================================================================
