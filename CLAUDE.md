@@ -1,0 +1,72 @@
+# CamCombo - 카메라 조합 비교 사이트
+
+## 프로젝트 개요
+- **과제**: 소프트웨어공학 과제 1 - Vibe Coding 소개
+- **주제**: 카메라 바디 + 렌즈 조합 비교 사이트
+- **기술 스택**: HTML, CSS, JavaScript만 사용 (프레임워크 X)
+- **과제 PDF**: `[과제 1] Vibe Coding.pdf`
+- **마감**: 2026-03-20 오후 5시
+
+## 파일 구조
+```
+SE/
+├── CLAUDE.md               ← 이 파일 (작업 컨텍스트)
+├── PLAN.md                 ← 구현 계획서
+├── PPT_CONTENT.md          ← 발표 자료 마크다운 (슬라이드 내용 + 반복 개선 기록)
+├── [과제 1] Vibe Coding.pdf ← 과제 명세
+├── index.html              ← V1 (placeholder 이미지, 하드코딩 가격)
+├── index_v2.html           ← V2 (제조사 공식 제품 이미지 적용)
+├── index_v3.html           ← V3 (실시간 가격 시뮬레이션 + 출처/시간 표시)
+├── slides.md               ← Slidev 슬라이드 소스 (참고용, PPTX 생성에는 미사용)
+├── generate_pptx.mjs       ← PPTX 생성 스크립트 (pptxgenjs)
+├── SE_과제1_발표자료.pptx    ← 최종 편집 가능한 PPTX (node generate_pptx.mjs로 재생성)
+├── SE_과제1_발표자료_v2.pptx ← Slidev 이미지 기반 PPTX (편집 불가, 삭제 가능)
+├── package.json            ← npm 프로젝트
+└── node_modules/           ← 의존성 (slidev, pptxgenjs, playwright-chromium 등)
+```
+
+## 버전 관리 규칙
+- **기존 html 파일을 수정하지 않고, 새 버전은 `index_v{N}.html`로 생성**
+- `index.html`은 V1 상태를 유지 (스크린샷 캡처용)
+- 최신 완성본은 가장 높은 버전 번호의 파일
+
+## 현재 진행 상황
+- **V1 완료**: 전체 페이지 초기 생성 (다크테마, 필터, 카드, 마운트 호환, 합산가격, 구매링크)
+- **V2 완료**: 25개 제품 이미지를 제조사 공식 사이트 이미지로 교체
+- **V3 완료**: 실시간 가격 시뮬레이션 (shimmer 로딩, 네이버쇼핑 출처 태그, 업데이트 시간)
+- **V4 완료**: 웹 검색으로 Deep Navy + Gold 팔레트 조사 → 웹페이지·PPT 색상 통일
+- **PPTX 완료**: pptxgenjs로 편집 가능한 15장 슬라이드 생성 (AI 오류 수정, 시행착오, 파이프라인 증거 포함)
+- **다음 버전**: V5부터 이어서 작업
+
+## PPTX 생성 방법
+- `generate_pptx.mjs`를 수정 후 `node generate_pptx.mjs` 실행하면 `SE_과제1_발표자료.pptx`를 덮어씀
+- **주의**: 실행 전에 PowerPoint에서 해당 파일을 닫아야 함 (EBUSY 에러 방지)
+- Slidev는 이미지 기반 export라 편집 불가 → **pptxgenjs 방식 사용**
+- PPTX 디자인: Deep Navy(#0D1B2A) 배경, Gold(#E2B714) 악센트, 카드 레이아웃
+
+## PPT 발표 자료 작업 규칙
+- `PPT_CONTENT.md`에 모든 반복 개선 과정을 기록
+- 웹페이지 수정 시마다 해당 단계(V{N})의 **프롬프트, 변경 내용, AI 판단 과정, 결과 관찰**을 추가
+- 부록의 "전체 프롬프트 로그" 테이블도 함께 업데이트
+- PPTX도 `generate_pptx.mjs`에 해당 슬라이드를 추가하고 재생성
+
+## 아직 남은 작업
+- **"AI가 잘못한 부분 → 수정 요청" 과정**: ✅ 완료 (슬라이드 9에 실제 사례 기록됨)
+- **활용방안 슬라이드**: "(개인적인 활용 계획 작성)" 부분 사용자가 직접 채워야 함
+- **시행착오 섹션**: "(실제 시행착오 내용 추가)" 부분 채워야 함
+- **스크린샷**: 각 V1/V2/V3 슬라이드에 브라우저 캡처 삽입 필요
+- **참고 자료**: 추가 참고 자료 보충 가능
+
+## 과제 핵심 요구사항 (PDF 기반)
+1. Vibe Coding 정의 (1페이지)
+2. Vibe Coding에 대한 질문 리스트
+3. Web Page 개발 예제 - Prompt 작성과정, 반복 수정 및 개선
+4. Vibe Coding 평가 - 한계점, 적용 가능 영역, 과대광고 경고, 왜 대세인가
+5. 활용방안 - 본인의 활용 계획, 공부/조사 계획
+6. **필수 기록사항**: 사용 GAI 도구, 사용 Prompt, 처음 결과의 부족한 점, 질문 수정/보완 과정
+
+## 청중
+- Python, HTML 등을 사용해 프로그램을 해본 경험이 있는 40~50대 직장 상사
+
+## 사용 GAI 도구
+- Claude Code (Anthropic Claude Opus 4.6) - VS Code 터미널 CLI

@@ -1,0 +1,1030 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CamCombo - 카메라 조합 비교</title>
+<style>
+  /* ========== Reset & Base ========== */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #121212;
+    --surface: #1e1e1e;
+    --surface2: #2a2a2a;
+    --accent: #ff6f00;
+    --accent-light: #ffa040;
+    --text: #e0e0e0;
+    --text-dim: #999;
+    --border: #333;
+    --selected: #ff6f00;
+    --card-radius: 12px;
+    --transition: 0.25s ease;
+  }
+
+  body {
+    font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+
+  /* ========== Header ========== */
+  header {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    padding: 2rem 1.5rem;
+    text-align: center;
+    border-bottom: 2px solid var(--accent);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  header h1 {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #fff;
+    letter-spacing: -0.5px;
+  }
+  header h1 span { color: var(--accent); }
+  header p {
+    color: var(--text-dim);
+    margin-top: 0.3rem;
+    font-size: 0.95rem;
+  }
+
+  /* ========== Container ========== */
+  .container {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 1.5rem;
+  }
+
+  /* ========== Filter Section ========== */
+  .filter-section {
+    background: var(--surface);
+    border-radius: var(--card-radius);
+    padding: 1.25rem 1.5rem;
+    margin-bottom: 2rem;
+    border: 1px solid var(--border);
+  }
+  .filter-section h2 {
+    font-size: 1rem;
+    color: var(--accent-light);
+    margin-bottom: 1rem;
+    font-weight: 600;
+  }
+  .filter-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    align-items: flex-start;
+  }
+  .filter-group { display: flex; flex-direction: column; gap: 0.4rem; }
+  .filter-group label {
+    font-size: 0.8rem;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .filter-buttons { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+  .filter-btn {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 0.4rem 0.9rem;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    transition: all var(--transition);
+  }
+  .filter-btn:hover { border-color: var(--accent); color: #fff; }
+  .filter-btn.active {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #fff;
+    font-weight: 600;
+  }
+  .price-range {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+  .price-range input[type="range"] {
+    width: 180px;
+    accent-color: var(--accent);
+  }
+  .price-range .price-label {
+    font-size: 0.9rem;
+    color: var(--accent-light);
+    min-width: 100px;
+    font-weight: 600;
+  }
+
+  /* ========== Section Titles ========== */
+  .section-title {
+    font-size: 1.3rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .section-title .icon { font-size: 1.4rem; }
+  .section-title .count {
+    font-size: 0.85rem;
+    color: var(--text-dim);
+    font-weight: 400;
+  }
+
+  /* ========== Card Grid ========== */
+  .card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 1rem;
+    margin-bottom: 2.5rem;
+  }
+
+  /* ========== Cards ========== */
+  .card {
+    background: var(--surface);
+    border: 2px solid var(--border);
+    border-radius: var(--card-radius);
+    padding: 1.2rem;
+    cursor: pointer;
+    transition: all var(--transition);
+    position: relative;
+    overflow: hidden;
+  }
+  .card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: transparent;
+    transition: background var(--transition);
+  }
+  .card:hover {
+    border-color: #555;
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.4);
+  }
+  .card:hover::before { background: var(--accent); }
+  .card.selected {
+    border-color: var(--selected);
+    box-shadow: 0 0 20px rgba(255,111,0,0.2);
+  }
+  .card.selected::before { background: var(--accent); }
+  .card.hidden {
+    display: none;
+  }
+
+  .card-image {
+    width: 100%;
+    height: 150px;
+    background: var(--surface2);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1rem;
+    font-size: 3rem;
+    overflow: hidden;
+  }
+  .card-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 8px;
+  }
+
+  .card-brand {
+    font-size: 0.75rem;
+    color: var(--accent-light);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-weight: 600;
+  }
+  .card-model {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #fff;
+    margin: 0.2rem 0 0.6rem;
+  }
+  .card-specs {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    font-size: 0.82rem;
+    color: var(--text-dim);
+  }
+  .card-specs span {
+    display: flex;
+    justify-content: space-between;
+  }
+  .card-specs .spec-label { color: #777; }
+  .card-specs .spec-value { color: var(--text); font-weight: 500; }
+  .card-price {
+    margin-top: 0.8rem;
+    padding-top: 0.8rem;
+    border-top: 1px solid var(--border);
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: #fff;
+  }
+  .selected-badge {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    background: var(--accent);
+    color: #fff;
+    padding: 0.2rem 0.6rem;
+    border-radius: 12px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    opacity: 0;
+    transition: opacity var(--transition);
+  }
+  .card.selected .selected-badge { opacity: 1; }
+
+  /* ========== Combination Result ========== */
+  .combo-section {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    border: 2px solid var(--accent);
+    border-radius: var(--card-radius);
+    padding: 2rem;
+    margin-bottom: 2rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .combo-section::before {
+    content: '';
+    position: absolute;
+    top: -50%; left: -50%;
+    width: 200%; height: 200%;
+    background: radial-gradient(circle, rgba(255,111,0,0.05) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .combo-section h2 {
+    font-size: 1.3rem;
+    margin-bottom: 1.5rem;
+    color: #fff;
+  }
+  .combo-empty {
+    color: var(--text-dim);
+    font-size: 0.95rem;
+    padding: 1rem 0;
+  }
+  .combo-content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+    margin-bottom: 1.5rem;
+  }
+  .combo-item {
+    background: rgba(255,255,255,0.05);
+    padding: 1rem 1.5rem;
+    border-radius: 10px;
+    border: 1px solid rgba(255,255,255,0.1);
+    min-width: 200px;
+  }
+  .combo-item .combo-label {
+    font-size: 0.75rem;
+    color: var(--accent-light);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .combo-item .combo-name {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #fff;
+    margin: 0.3rem 0;
+  }
+  .combo-item .combo-price-single {
+    font-size: 0.9rem;
+    color: var(--text-dim);
+  }
+  .combo-plus {
+    font-size: 1.8rem;
+    color: var(--accent);
+    font-weight: 700;
+  }
+  .combo-total {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid rgba(255,255,255,0.1);
+  }
+  .combo-total .total-label {
+    font-size: 0.85rem;
+    color: var(--text-dim);
+    margin-bottom: 0.3rem;
+  }
+  .combo-total .total-price {
+    font-size: 2rem;
+    font-weight: 800;
+    color: var(--accent-light);
+  }
+  .combo-total .total-weight {
+    font-size: 0.9rem;
+    color: var(--text-dim);
+    margin-top: 0.3rem;
+  }
+  .buy-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 0.8rem;
+    margin-top: 1.2rem;
+    flex-wrap: wrap;
+  }
+  .buy-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.7rem 1.5rem;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.9rem;
+    transition: all var(--transition);
+    border: none;
+    cursor: pointer;
+  }
+  .buy-btn.naver {
+    background: #03c75a;
+    color: #fff;
+  }
+  .buy-btn.naver:hover { background: #02b350; transform: translateY(-2px); }
+  .buy-btn.coupang {
+    background: #e52528;
+    color: #fff;
+  }
+  .buy-btn.coupang:hover { background: #cc2022; transform: translateY(-2px); }
+
+  /* ========== Footer ========== */
+  footer {
+    text-align: center;
+    padding: 2rem 1rem;
+    color: #555;
+    font-size: 0.8rem;
+    border-top: 1px solid var(--border);
+    margin-top: 2rem;
+  }
+  footer a { color: var(--accent-light); text-decoration: none; }
+  footer a:hover { text-decoration: underline; }
+
+  /* ========== Responsive ========== */
+  @media (max-width: 768px) {
+    header h1 { font-size: 1.5rem; }
+    .card-grid {
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    }
+    .combo-content { flex-direction: column; }
+    .combo-plus { transform: rotate(90deg); }
+    .filter-row { flex-direction: column; }
+    .price-range input[type="range"] { width: 100%; }
+  }
+
+  @media (max-width: 480px) {
+    .container { padding: 1rem; }
+    .card-grid {
+      grid-template-columns: 1fr;
+    }
+    header { padding: 1.2rem 1rem; }
+  }
+
+  /* ========== Animations ========== */
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .card { animation: fadeIn 0.4s ease forwards; }
+
+  /* ========== Compatibility Notice ========== */
+  .compat-notice {
+    background: rgba(255,111,0,0.1);
+    border: 1px solid rgba(255,111,0,0.3);
+    border-radius: 8px;
+    padding: 0.7rem 1rem;
+    margin-bottom: 1rem;
+    font-size: 0.85rem;
+    color: var(--accent-light);
+    display: none;
+  }
+  .compat-notice.visible { display: block; }
+</style>
+</head>
+<body>
+
+<!-- ===== Header ===== -->
+<header>
+  <h1><span>Cam</span>Combo</h1>
+  <p>카메라 바디 + 렌즈 조합을 한눈에 비교하고, 최적의 세트를 찾아보세요</p>
+</header>
+
+<div class="container">
+
+  <!-- ===== Filters ===== -->
+  <section class="filter-section">
+    <h2>필터</h2>
+    <div class="filter-row">
+      <div class="filter-group">
+        <label>브랜드</label>
+        <div class="filter-buttons" id="brandFilters">
+          <button class="filter-btn active" data-brand="all">전체</button>
+          <button class="filter-btn" data-brand="Sony">Sony</button>
+          <button class="filter-btn" data-brand="Canon">Canon</button>
+          <button class="filter-btn" data-brand="Nikon">Nikon</button>
+          <button class="filter-btn" data-brand="Fujifilm">Fujifilm</button>
+        </div>
+      </div>
+      <div class="filter-group">
+        <label>바디 가격대</label>
+        <div class="price-range">
+          <input type="range" id="bodyPriceRange" min="0" max="500" value="500" step="10">
+          <span class="price-label" id="bodyPriceLabel">전체</span>
+        </div>
+      </div>
+      <div class="filter-group">
+        <label>렌즈 가격대</label>
+        <div class="price-range">
+          <input type="range" id="lensPriceRange" min="0" max="400" value="400" step="10">
+          <span class="price-label" id="lensPriceLabel">전체</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== Camera Bodies ===== -->
+  <h3 class="section-title">
+    <span class="icon">📷</span> 카메라 바디
+    <span class="count" id="bodyCount"></span>
+  </h3>
+  <div class="card-grid" id="bodyGrid"></div>
+
+  <!-- ===== Lenses ===== -->
+  <h3 class="section-title">
+    <span class="icon">🔭</span> 렌즈
+    <span class="count" id="lensCount"></span>
+  </h3>
+  <div class="compat-notice" id="compatNotice">
+    선택한 바디에 호환되는 렌즈만 표시됩니다.
+  </div>
+  <div class="card-grid" id="lensGrid"></div>
+
+  <!-- ===== Combination Result ===== -->
+  <section class="combo-section" id="comboSection">
+    <h2>조합 결과</h2>
+    <div id="comboContent">
+      <p class="combo-empty">위에서 카메라 바디와 렌즈를 선택하면 조합 정보가 표시됩니다.</p>
+    </div>
+  </section>
+
+</div>
+
+<!-- ===== Footer ===== -->
+<footer>
+  <p>CamCombo &copy; 2026 | 소프트웨어공학 Vibe Coding 과제</p>
+  <p>가격 및 스펙 정보는 참고용이며, 실제와 다를 수 있습니다.</p>
+  <p>데이터 출처: 각 제조사 공식 사이트 참고</p>
+</footer>
+
+<script>
+// ============================================================
+// Mock Data
+// ============================================================
+const cameras = [
+  {
+    id: 'sony-a7iv',
+    brand: 'Sony',
+    model: 'A7 IV',
+    mount: 'Sony E',
+    sensor: '풀프레임',
+    price: 279,
+    megapixel: 33,
+    weight: 658,
+    image: 'https://picsum.photos/seed/sonya7iv/400/300'
+  },
+  {
+    id: 'sony-a7cii',
+    brand: 'Sony',
+    model: 'A7C II',
+    mount: 'Sony E',
+    sensor: '풀프레임',
+    price: 239,
+    megapixel: 33,
+    weight: 514,
+    image: 'https://picsum.photos/seed/sonya7cii/400/300'
+  },
+  {
+    id: 'sony-a6700',
+    brand: 'Sony',
+    model: 'A6700',
+    mount: 'Sony E',
+    sensor: 'APS-C',
+    price: 165,
+    megapixel: 26,
+    weight: 493,
+    image: 'https://picsum.photos/seed/sonya6700/400/300'
+  },
+  {
+    id: 'canon-r6ii',
+    brand: 'Canon',
+    model: 'EOS R6 Mark II',
+    mount: 'Canon RF',
+    sensor: '풀프레임',
+    price: 289,
+    megapixel: 24.2,
+    weight: 670,
+    image: 'https://picsum.photos/seed/canonr6ii/400/300'
+  },
+  {
+    id: 'canon-r50',
+    brand: 'Canon',
+    model: 'EOS R50',
+    mount: 'Canon RF',
+    sensor: 'APS-C',
+    price: 85,
+    megapixel: 24.2,
+    weight: 375,
+    image: 'https://picsum.photos/seed/canonr50/400/300'
+  },
+  {
+    id: 'canon-r8',
+    brand: 'Canon',
+    model: 'EOS R8',
+    mount: 'Canon RF',
+    sensor: '풀프레임',
+    price: 179,
+    megapixel: 24.2,
+    weight: 461,
+    image: 'https://picsum.photos/seed/canonr8/400/300'
+  },
+  {
+    id: 'nikon-z6iii',
+    brand: 'Nikon',
+    model: 'Z6 III',
+    mount: 'Nikon Z',
+    sensor: '풀프레임',
+    price: 299,
+    megapixel: 24.5,
+    weight: 760,
+    image: 'https://picsum.photos/seed/nikonz6iii/400/300'
+  },
+  {
+    id: 'nikon-zf',
+    brand: 'Nikon',
+    model: 'Zf',
+    mount: 'Nikon Z',
+    sensor: '풀프레임',
+    price: 219,
+    megapixel: 24.5,
+    weight: 710,
+    image: 'https://picsum.photos/seed/nikonzf/400/300'
+  },
+  {
+    id: 'fuji-xt5',
+    brand: 'Fujifilm',
+    model: 'X-T5',
+    mount: 'Fujifilm X',
+    sensor: 'APS-C',
+    price: 189,
+    megapixel: 40.2,
+    weight: 557,
+    image: 'https://picsum.photos/seed/fujxt5/400/300'
+  },
+  {
+    id: 'fuji-xs20',
+    brand: 'Fujifilm',
+    model: 'X-S20',
+    mount: 'Fujifilm X',
+    sensor: 'APS-C',
+    price: 149,
+    megapixel: 26.1,
+    weight: 491,
+    image: 'https://picsum.photos/seed/fujxs20/400/300'
+  }
+];
+
+const lenses = [
+  // Sony
+  {
+    id: 'sony-2470gm2',
+    brand: 'Sony',
+    model: 'FE 24-70mm f/2.8 GM II',
+    mount: 'Sony E',
+    focalLength: '24-70mm',
+    aperture: 'f/2.8',
+    price: 248,
+    weight: 695,
+    image: 'https://picsum.photos/seed/sony2470/400/300'
+  },
+  {
+    id: 'sony-50f14gm',
+    brand: 'Sony',
+    model: 'FE 50mm f/1.4 GM',
+    mount: 'Sony E',
+    focalLength: '50mm',
+    aperture: 'f/1.4',
+    price: 168,
+    weight: 516,
+    image: 'https://picsum.photos/seed/sony50/400/300'
+  },
+  {
+    id: 'sony-85f18',
+    brand: 'Sony',
+    model: 'FE 85mm f/1.8',
+    mount: 'Sony E',
+    focalLength: '85mm',
+    aperture: 'f/1.8',
+    price: 68,
+    weight: 371,
+    image: 'https://picsum.photos/seed/sony85/400/300'
+  },
+  {
+    id: 'sony-70200gm2',
+    brand: 'Sony',
+    model: 'FE 70-200mm f/2.8 GM II',
+    mount: 'Sony E',
+    focalLength: '70-200mm',
+    aperture: 'f/2.8',
+    price: 328,
+    weight: 1045,
+    image: 'https://picsum.photos/seed/sony70200/400/300'
+  },
+  // Canon
+  {
+    id: 'canon-rf2470',
+    brand: 'Canon',
+    model: 'RF 24-70mm f/2.8L IS USM',
+    mount: 'Canon RF',
+    focalLength: '24-70mm',
+    aperture: 'f/2.8',
+    price: 269,
+    weight: 900,
+    image: 'https://picsum.photos/seed/canon2470/400/300'
+  },
+  {
+    id: 'canon-rf50f18',
+    brand: 'Canon',
+    model: 'RF 50mm f/1.8 STM',
+    mount: 'Canon RF',
+    focalLength: '50mm',
+    aperture: 'f/1.8',
+    price: 25,
+    weight: 160,
+    image: 'https://picsum.photos/seed/canon50/400/300'
+  },
+  {
+    id: 'canon-rf85f2',
+    brand: 'Canon',
+    model: 'RF 85mm f/2 Macro IS STM',
+    mount: 'Canon RF',
+    focalLength: '85mm',
+    aperture: 'f/2.0',
+    price: 72,
+    weight: 500,
+    image: 'https://picsum.photos/seed/canon85/400/300'
+  },
+  {
+    id: 'canon-rf1535',
+    brand: 'Canon',
+    model: 'RF 15-35mm f/2.8L IS USM',
+    mount: 'Canon RF',
+    focalLength: '15-35mm',
+    aperture: 'f/2.8',
+    price: 269,
+    weight: 840,
+    image: 'https://picsum.photos/seed/canon1535/400/300'
+  },
+  // Nikon
+  {
+    id: 'nikon-z2470f28',
+    brand: 'Nikon',
+    model: 'NIKKOR Z 24-70mm f/2.8 S',
+    mount: 'Nikon Z',
+    focalLength: '24-70mm',
+    aperture: 'f/2.8',
+    price: 249,
+    weight: 805,
+    image: 'https://picsum.photos/seed/nikon2470/400/300'
+  },
+  {
+    id: 'nikon-z50f18',
+    brand: 'Nikon',
+    model: 'NIKKOR Z 50mm f/1.8 S',
+    mount: 'Nikon Z',
+    focalLength: '50mm',
+    aperture: 'f/1.8',
+    price: 69,
+    weight: 415,
+    image: 'https://picsum.photos/seed/nikon50/400/300'
+  },
+  {
+    id: 'nikon-z85f18',
+    brand: 'Nikon',
+    model: 'NIKKOR Z 85mm f/1.8 S',
+    mount: 'Nikon Z',
+    focalLength: '85mm',
+    aperture: 'f/1.8',
+    price: 89,
+    weight: 470,
+    image: 'https://picsum.photos/seed/nikon85/400/300'
+  },
+  // Fujifilm
+  {
+    id: 'fuji-xf1855',
+    brand: 'Fujifilm',
+    model: 'XF 18-55mm f/2.8-4 R LM OIS',
+    mount: 'Fujifilm X',
+    focalLength: '18-55mm',
+    aperture: 'f/2.8-4',
+    price: 79,
+    weight: 310,
+    image: 'https://picsum.photos/seed/fuji1855/400/300'
+  },
+  {
+    id: 'fuji-xf35f14',
+    brand: 'Fujifilm',
+    model: 'XF 35mm f/1.4 R',
+    mount: 'Fujifilm X',
+    focalLength: '35mm',
+    aperture: 'f/1.4',
+    price: 59,
+    weight: 187,
+    image: 'https://picsum.photos/seed/fuji35/400/300'
+  },
+  {
+    id: 'fuji-xf56f12',
+    brand: 'Fujifilm',
+    model: 'XF 56mm f/1.2 R WR',
+    mount: 'Fujifilm X',
+    focalLength: '56mm',
+    aperture: 'f/1.2',
+    price: 119,
+    weight: 445,
+    image: 'https://picsum.photos/seed/fuji56/400/300'
+  },
+  {
+    id: 'fuji-xf1024',
+    brand: 'Fujifilm',
+    model: 'XF 10-24mm f/4 R OIS WR',
+    mount: 'Fujifilm X',
+    focalLength: '10-24mm',
+    aperture: 'f/4.0',
+    price: 109,
+    weight: 385,
+    image: 'https://picsum.photos/seed/fuji1024/400/300'
+  }
+];
+
+// ============================================================
+// State
+// ============================================================
+let selectedBrand = 'all';
+let selectedBody = null;
+let selectedLens = null;
+let bodyMaxPrice = 500;
+let lensMaxPrice = 400;
+
+// ============================================================
+// Utility
+// ============================================================
+function formatPrice(万) {
+  return 万 + '만원';
+}
+
+// ============================================================
+// Render Functions
+// ============================================================
+function renderBodies() {
+  const grid = document.getElementById('bodyGrid');
+  grid.innerHTML = '';
+  let visibleCount = 0;
+
+  cameras.forEach(cam => {
+    const matchBrand = selectedBrand === 'all' || cam.brand === selectedBrand;
+    const matchPrice = cam.price <= bodyMaxPrice;
+    const visible = matchBrand && matchPrice;
+    if (visible) visibleCount++;
+
+    const card = document.createElement('div');
+    card.className = 'card' + (selectedBody && selectedBody.id === cam.id ? ' selected' : '') + (!visible ? ' hidden' : '');
+    card.innerHTML = `
+      <span class="selected-badge">선택됨</span>
+      <div class="card-image">
+        <img src="${cam.image}" alt="${cam.brand} ${cam.model}" loading="lazy"
+             onerror="this.parentElement.innerHTML='📷'">
+      </div>
+      <div class="card-brand">${cam.brand}</div>
+      <div class="card-model">${cam.model}</div>
+      <div class="card-specs">
+        <span><span class="spec-label">센서</span><span class="spec-value">${cam.sensor}</span></span>
+        <span><span class="spec-label">화소수</span><span class="spec-value">${cam.megapixel}MP</span></span>
+        <span><span class="spec-label">마운트</span><span class="spec-value">${cam.mount}</span></span>
+        <span><span class="spec-label">무게</span><span class="spec-value">${cam.weight}g</span></span>
+      </div>
+      <div class="card-price">${formatPrice(cam.price)}</div>
+    `;
+    card.addEventListener('click', () => selectBody(cam));
+    grid.appendChild(card);
+  });
+
+  document.getElementById('bodyCount').textContent = `(${visibleCount}개)`;
+}
+
+function renderLenses() {
+  const grid = document.getElementById('lensGrid');
+  grid.innerHTML = '';
+  let visibleCount = 0;
+  const notice = document.getElementById('compatNotice');
+
+  if (selectedBody) {
+    notice.classList.add('visible');
+    notice.textContent = `${selectedBody.brand} ${selectedBody.model} (${selectedBody.mount} 마운트) 호환 렌즈만 표시됩니다.`;
+  } else {
+    notice.classList.remove('visible');
+  }
+
+  lenses.forEach(lens => {
+    const matchBrand = selectedBrand === 'all' || lens.brand === selectedBrand;
+    const matchPrice = lens.price <= lensMaxPrice;
+    const matchMount = !selectedBody || lens.mount === selectedBody.mount;
+    const visible = matchBrand && matchPrice && matchMount;
+    if (visible) visibleCount++;
+
+    const card = document.createElement('div');
+    card.className = 'card' + (selectedLens && selectedLens.id === lens.id ? ' selected' : '') + (!visible ? ' hidden' : '');
+    card.innerHTML = `
+      <span class="selected-badge">선택됨</span>
+      <div class="card-image">
+        <img src="${lens.image}" alt="${lens.brand} ${lens.model}" loading="lazy"
+             onerror="this.parentElement.innerHTML='🔭'">
+      </div>
+      <div class="card-brand">${lens.brand}</div>
+      <div class="card-model">${lens.model}</div>
+      <div class="card-specs">
+        <span><span class="spec-label">초점거리</span><span class="spec-value">${lens.focalLength}</span></span>
+        <span><span class="spec-label">최대 조리개</span><span class="spec-value">${lens.aperture}</span></span>
+        <span><span class="spec-label">마운트</span><span class="spec-value">${lens.mount}</span></span>
+        <span><span class="spec-label">무게</span><span class="spec-value">${lens.weight}g</span></span>
+      </div>
+      <div class="card-price">${formatPrice(lens.price)}</div>
+    `;
+    card.addEventListener('click', () => selectLens(lens));
+    grid.appendChild(card);
+  });
+
+  document.getElementById('lensCount').textContent = `(${visibleCount}개)`;
+}
+
+function renderCombo() {
+  const content = document.getElementById('comboContent');
+
+  if (!selectedBody && !selectedLens) {
+    content.innerHTML = '<p class="combo-empty">위에서 카메라 바디와 렌즈를 선택하면 조합 정보가 표시됩니다.</p>';
+    return;
+  }
+
+  let html = '<div class="combo-content">';
+
+  if (selectedBody) {
+    html += `
+      <div class="combo-item">
+        <div class="combo-label">바디</div>
+        <div class="combo-name">${selectedBody.brand} ${selectedBody.model}</div>
+        <div class="combo-price-single">${formatPrice(selectedBody.price)}</div>
+      </div>
+    `;
+  } else {
+    html += `
+      <div class="combo-item">
+        <div class="combo-label">바디</div>
+        <div class="combo-name" style="color:var(--text-dim)">선택해주세요</div>
+      </div>
+    `;
+  }
+
+  html += '<div class="combo-plus">+</div>';
+
+  if (selectedLens) {
+    html += `
+      <div class="combo-item">
+        <div class="combo-label">렌즈</div>
+        <div class="combo-name">${selectedLens.brand} ${selectedLens.model}</div>
+        <div class="combo-price-single">${formatPrice(selectedLens.price)}</div>
+      </div>
+    `;
+  } else {
+    html += `
+      <div class="combo-item">
+        <div class="combo-label">렌즈</div>
+        <div class="combo-name" style="color:var(--text-dim)">선택해주세요</div>
+      </div>
+    `;
+  }
+
+  html += '</div>';
+
+  if (selectedBody && selectedLens) {
+    const totalPrice = selectedBody.price + selectedLens.price;
+    const totalWeight = selectedBody.weight + selectedLens.weight;
+    const searchQuery = encodeURIComponent(`${selectedBody.brand} ${selectedBody.model} ${selectedLens.model}`);
+    const bodyQuery = encodeURIComponent(`${selectedBody.brand} ${selectedBody.model}`);
+    const lensQuery = encodeURIComponent(`${selectedLens.brand} ${selectedLens.model}`);
+
+    html += `
+      <div class="combo-total">
+        <div class="total-label">합산 가격</div>
+        <div class="total-price">${formatPrice(totalPrice)}</div>
+        <div class="total-weight">총 무게: ${totalWeight}g</div>
+      </div>
+      <div class="buy-buttons">
+        <a class="buy-btn naver" href="https://search.shopping.naver.com/search/all?query=${searchQuery}" target="_blank" rel="noopener">
+          네이버 쇼핑에서 검색
+        </a>
+        <a class="buy-btn coupang" href="https://www.coupang.com/np/search?component=&q=${bodyQuery}" target="_blank" rel="noopener">
+          쿠팡에서 바디 검색
+        </a>
+        <a class="buy-btn coupang" href="https://www.coupang.com/np/search?component=&q=${lensQuery}" target="_blank" rel="noopener">
+          쿠팡에서 렌즈 검색
+        </a>
+      </div>
+    `;
+  }
+
+  content.innerHTML = html;
+}
+
+// ============================================================
+// Event Handlers
+// ============================================================
+function selectBody(cam) {
+  if (selectedBody && selectedBody.id === cam.id) {
+    selectedBody = null;
+  } else {
+    selectedBody = cam;
+    // 선택된 바디와 호환되지 않는 렌즈가 선택되어 있으면 해제
+    if (selectedLens && selectedLens.mount !== cam.mount) {
+      selectedLens = null;
+    }
+  }
+  renderBodies();
+  renderLenses();
+  renderCombo();
+}
+
+function selectLens(lens) {
+  if (selectedLens && selectedLens.id === lens.id) {
+    selectedLens = null;
+  } else {
+    selectedLens = lens;
+  }
+  renderLenses();
+  renderCombo();
+}
+
+// Brand filter
+document.getElementById('brandFilters').addEventListener('click', (e) => {
+  const btn = e.target.closest('.filter-btn');
+  if (!btn) return;
+
+  document.querySelectorAll('#brandFilters .filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  selectedBrand = btn.dataset.brand;
+
+  renderBodies();
+  renderLenses();
+});
+
+// Body price range
+const bodyPriceSlider = document.getElementById('bodyPriceRange');
+bodyPriceSlider.addEventListener('input', () => {
+  bodyMaxPrice = parseInt(bodyPriceSlider.value);
+  document.getElementById('bodyPriceLabel').textContent =
+    bodyMaxPrice >= 500 ? '전체' : `~${formatPrice(bodyMaxPrice)}`;
+  renderBodies();
+});
+
+// Lens price range
+const lensPriceSlider = document.getElementById('lensPriceRange');
+lensPriceSlider.addEventListener('input', () => {
+  lensMaxPrice = parseInt(lensPriceSlider.value);
+  document.getElementById('lensPriceLabel').textContent =
+    lensMaxPrice >= 400 ? '전체' : `~${formatPrice(lensMaxPrice)}`;
+  renderLenses();
+});
+
+// ============================================================
+// Initial Render
+// ============================================================
+renderBodies();
+renderLenses();
+renderCombo();
+</script>
+
+</body>
+</html>
